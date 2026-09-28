@@ -5,7 +5,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: eve_healthcare
-      POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - "5435:5432"
     volumes:
@@ -25,6 +24,7 @@ services:
       JWT_ALGORITHM: HS256
       JWT_EXPIRATION_MINUTES: 60
       WEBHOOK_SECRET: local-dev-webhook-secret
+      PYTHONPATH: /app
     command: >
       sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
 

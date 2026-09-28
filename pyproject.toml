@@ -1,0 +1,9 @@
+[project]
+name = "eve-healthcare-booking"
+version = "0.1.0"
+description = "REST API for diagnostic test bookings and simulated payments"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]

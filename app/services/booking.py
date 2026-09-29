@@ -36,6 +36,10 @@ def create_booking(
             detail="This test is not offered by the selected centre",
         )
 
+    # Treat naive datetimes as UTC
+    if appointment_at.tzinfo is None:
+        appointment_at = appointment_at.replace(tzinfo=timezone.utc)
+
     if appointment_at <= datetime.now(timezone.utc):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

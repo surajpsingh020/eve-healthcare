@@ -111,6 +111,30 @@ def test_booking_past_appointment(client, db, user_token, regular_user):
     assert resp.status_code == 400
 
 
+def test_booking_naive_datetime_future(client, db, user_token, regular_user):
+    centre, test = _seed_catalogue(db)
+    # Naive future datetime (without +00:00)
+    future = (datetime.now(timezone.utc) + timedelta(days=1)).replace(tzinfo=None).isoformat()
+    resp = client.post("/api/v1/bookings", json={
+        "centre_id": centre.id,
+        "test_id": test.id,
+        "appointment_at": future,
+    }, headers=auth_header(user_token))
+    assert resp.status_code == 201
+
+
+def test_booking_naive_datetime_past(client, db, user_token, regular_user):
+    centre, test = _seed_catalogue(db)
+    # Naive past datetime
+    past = (datetime.now(timezone.utc) - timedelta(hours=1)).replace(tzinfo=None).isoformat()
+    resp = client.post("/api/v1/bookings", json={
+        "centre_id": centre.id,
+        "test_id": test.id,
+        "appointment_at": past,
+    }, headers=auth_header(user_token))
+    assert resp.status_code == 400
+
+
 def test_list_own_bookings(client, db, user_token, regular_user):
     centre, test = _seed_catalogue(db)
     client.post("/api/v1/bookings", json={

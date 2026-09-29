@@ -1,12 +1,16 @@
 from typing import Annotated
 
-from fastapi import Depends, Header, HTTPException, status
+from fastapi import Depends, Header, HTTPException, status, Security
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.security import decode_access_token
 from app.db.session import SessionLocal
 from app.models.user import User
+
+
+bearer_scheme = HTTPBearer(bearerFormat="JWT", auto_error=False)
 
 
 def get_db():
@@ -20,6 +24,7 @@ def get_db():
 def get_current_user(
     db: Annotated[Session, Depends(get_db)],
     authorization: Annotated[str | None, Header()] = None,
+    _token: Annotated[HTTPAuthorizationCredentials | None, Security(bearer_scheme)] = None,
 ) -> User:
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(
